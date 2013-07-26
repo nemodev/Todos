@@ -114,7 +114,7 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			var socket = io.connect('http://bruce.kr:3000');
+			var socket = io.connect('http://localhost:3000');
 			
 			socket.on('connect', function () {
 				socket.emit('requestAll');

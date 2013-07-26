@@ -13,9 +13,44 @@ app.get('/', function(req, res){
 var server = app.listen(3000);
 var io = socket.listen(server);
 
+//var todos = [{id:1,content:"HTML5 공부",done=false, isAlive=true}];
+var lookup = {};
+lookup[1] = {id:1,content:"HTML5 Study", isDone:false, isAlive:true};
+
+var nextId = 2;
+
 io.sockets.on('connection', function (socket) {
-	console.log("connnect");
+	console.log('New client is connected');
+
+	socket.on('requestAll', function() {
+		socket.emit('giveAll', lookup);
+	});
+
 	socket.on('disconnect', function (socket) {
 		console.log("disconnect");
 	});
+
+	socket.on('todoAdding', function (todo){
+		console.log(todo.id + " is being added.");
+
+		todo.id = nextId;
+		lookup[todo.id] = todo;
+		console.log(todo);
+
+		io.sockets.emit('todoAdded', todo);
+
+		nextId++;
+	});
+
+	socket.on('todoRemoving', function(removingTodoId){
+		console.log(removingTodoId + " is being removed.");
+
+		var id = removingTodoId;
+		var todoRemoving = lookup[id];
+		todoRemoving.isAlive = false;
+
+		console.log(todoRemoving);
+
+		io.sockets.emit('todoRemoved', todoRemoving);
+	})
 });

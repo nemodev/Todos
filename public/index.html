@@ -90,7 +90,6 @@
         <div class="page-header">
           <h1>Todos</h1>
         </div>
-        <p>Add ToDo items and tag them. :-)</p>
         <input id="input" type="text" class="text input_todo" placeholder="Input ToDo contents here..."/>
 
         <table id="todoListTable" class="table table-striped table-condensed">
@@ -112,21 +111,60 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			var socket = io.connect('http://localhost:3000');
+			
+			socket.on('connect', function () {
+				socket.emit('requestAll');
+			});
+
+			socket.on('giveAll', function(lookup){
+				$('#todoListTable > tbody').empty();
+				
+				var id = 1;
+				while(lookup[id]) {
+					var todo = lookup[id];
+					addTodo(todo);
+					id++;
+				}
+			});
+
 			$("#input").keydown(function (e){
 				if(e.keyCode == 13) {
 					var todoContent = $("#input").val();
 
-					var appendingRow = '<tr><td class="td_done"><input type="checkbox" class="checkbox"/></td><td>'+ todoContent +'</td><td class="td_remove_item"><button type="button" class="close">&times;</button></td></tr>';
+					socket.emit("todoAdding", {
+						id:-1, 
+						content : todoContent,
+						isDone:false, 
+						isAlive:true
+					});
 
-					$("#todoListTable > tbody:last").append(appendingRow);
 					$("#input").val("");
 				};
 			});
 
+			socket.on('todoAdded', addTodo);
+
+			function addTodo(addedTodo){
+
+				var addedTodoId = addedTodo.id;
+				var todoContent = addedTodo.content;
+
+				var appendingRow = '<tr id='+ addedTodoId + '><td class="td_done"><input type="checkbox" class="checkbox"/></td><td>'+ todoContent +'</td><td class="td_remove_item"><button type="button" class="close">&times;</button></td></tr>';
+
+				$("#todoListTable > tbody:last").append(appendingRow);
+			}
+
 			$(document).on('click','button.close', (function () {
 			    var row = $(this).parent().parent();
-			    row.remove();
+			    var removingTodoId = row.attr('id');
+				socket.emit('todoRemoving', removingTodoId);
 			}));
+
+			socket.on('todoRemoved', function(removedTodo){
+				var removedTodoId = removedTodo.id;
+			    $('#'+removedTodoId).remove();
+			});
 		});
 
 	</script>

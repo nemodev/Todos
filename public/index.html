@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>Todos</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<style type="text/css">
+	/* Sticky footer styles
+	-------------------------------------------------- */
+	html,
+	body {
+	height: 100%;
+	/* The html and body elements cannot have any padding or margin. */
+	}
+
+	/* Wrapper for page content to push down footer */
+	#wrap {
+		min-height: 100%;
+		height: auto !important;
+		height: 100%;
+		/* Negative indent footer by it's height */
+		margin: 0 auto -60px;
+	}
+
+	/* Set the fixed height of the footer here */
+	#push,
+	#footer {
+		height: 60px;
+	}
+	#footer {
+		background-color: #f5f5f5;
+	}
+
+	/* Lastly, apply responsive CSS fixes as necessary */
+	@media (max-width: 767px) {
+		#footer {
+			margin-left: -20px;
+			margin-right: -20px;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	/* Custom page CSS
+	-------------------------------------------------- */
+	/* Not required for template or sticky footer method. */
+
+	.container {
+		width: auto;
+		max-width: 680px;
+	}
+	.container .credit {
+		margin: 20px 0;
+		text-align: center;
+	}
+
+	.input_todo {
+		width: 100%;
+	}
+
+	.td_done {
+		width:25px;
+	}
+
+	.td_remove_item {
+		width: 25px;
+	}
+    </style>
+    <link href="bootstrap//css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="bootstrap/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="bootstrap/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="bootstrap/ico/apple-touch-icon-114-precomposed.png">
+  	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
+   	<link rel="shortcut icon" href="bootstrap/ico/favicon.png">
+</head>
+<body>
+
+	<div id="wrap">
+
+      <!-- Begin page content -->
+      <div class="container">
+        <div class="page-header">
+          <h1>Todos</h1>
+        </div>
+        <p>Add ToDo items and tag them. :-)</p>
+        <input id="input" type="text" class="text input_todo" placeholder="Input ToDo contents here..."/>
+
+        <table id="todoListTable" class="table table-striped table-condensed">
+        	<tbody>
+        	</tbody>
+        </table>
+      </div>
+      <div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">A simple Todo list service by Bruce Yang</p>
+      </div>
+    </div>
+
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#input").keydown(function (e){
+				if(e.keyCode == 13) {
+					var todoContent = $("#input").val();
+
+					var appendingRow = '<tr><td class="td_done"><input type="checkbox" class="checkbox"/></td><td>'+ todoContent +'</td><td class="td_remove_item"><button type="button" class="close">&times;</button></td></tr>';
+
+					$("#todoListTable > tbody:last").append(appendingRow);
+					$("#input").val("");
+				};
+			});
+
+			$(document).on('click','button.close', (function () {
+			    var row = $(this).parent().parent();
+			    row.remove();
+			}));
+		});
+
+	</script>
+</body>
+</html>

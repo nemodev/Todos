@@ -1,0 +1,20 @@
+{
+  "name": "Todos",
+  "version": "0.0.1",
+  "description": "A simple ToDo list service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nemodev/Todos.git"
+  },
+  "author": "Bruce Yang",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "e6be14fb2c8a6f3111d84b34822f1d4efae5fa85",
+  "dependencies": {
+    "express": "~3.3.4"
+  }
+}

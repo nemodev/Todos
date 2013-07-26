@@ -122,9 +122,12 @@
 				
 				var id = 1;
 				while(lookup[id]) {
+
 					var todo = lookup[id];
-					addTodo(todo);
 					id++;
+
+					if(todo.isAlive)
+						addTodo(todo);
 				}
 			});
 

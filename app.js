@@ -52,5 +52,19 @@ io.sockets.on('connection', function (socket) {
 		console.log(todoRemoving);
 
 		io.sockets.emit('todoRemoved', todoRemoving);
-	})
+	});
+
+	socket.on('todoDoneChanging', function(data){
+		var id = data.id;
+		var isDone = data.isDone;
+
+		console.log(id + ' is ' + (isDone? 'done.':'not done.'));
+		
+		var todo = lookup[id];
+		todo.isDone = isDone;
+
+		console.log(todo);
+
+		io.sockets.emit('todoDoneChanged', todo);
+	});
 });

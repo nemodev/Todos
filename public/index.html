@@ -63,6 +63,9 @@
 		width:25px;
 	}
 
+	.td_content {
+	}
+
 	.td_remove_item {
 		width: 25px;
 	}
@@ -149,24 +152,39 @@
 			socket.on('todoAdded', addTodo);
 
 			function addTodo(addedTodo){
-
 				var addedTodoId = addedTodo.id;
 				var todoContent = addedTodo.content;
-
-				var appendingRow = '<tr id='+ addedTodoId + '><td class="td_done"><input type="checkbox" class="checkbox"/></td><td>'+ todoContent +'</td><td class="td_remove_item"><button type="button" class="close">&times;</button></td></tr>';
+				var isDone = addedTodo.isDone;
+				var appendingRow = '<tr id='+ addedTodoId + '><td class="td_done"><input type="checkbox" class="checkbox"'+(isDone?' checked="checked"':'')+'/></td><td class="td_content">'+ todoContent +'</td><td class="td_remove_item"><button type="button" class="close">&times;</button></td></tr>';
 
 				$("#todoListTable > tbody:last").append(appendingRow);
 			}
 
-			$(document).on('click','button.close', (function () {
+			$(document).on('click','button.close', function () {
 			    var row = $(this).parent().parent();
 			    var removingTodoId = row.attr('id');
 				socket.emit('todoRemoving', removingTodoId);
-			}));
+			});
 
 			socket.on('todoRemoved', function(removedTodo){
 				var removedTodoId = removedTodo.id;
 			    $('#'+removedTodoId).remove();
+			});
+
+			$(document).on('click', 'input.checkbox', function () {
+				var ischecked = $(this).is(':checked');
+
+			    var row = $(this).parent().parent();
+			    var removingTodoId = row.attr('id');
+			    socket.emit('todoDoneChanging', {id:removingTodoId, isDone:ischecked});
+			});
+
+			socket.on('todoDoneChanged', function(data){
+
+				var id = data.id;
+				var isDone = data.isDone;
+
+				$('#'+id + ' .checkbox').prop("checked", isDone);
 			});
 		});
 
